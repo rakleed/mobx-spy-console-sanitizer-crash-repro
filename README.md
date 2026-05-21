@@ -1,0 +1,1 @@
+# mobx-vite-rolldown-invalid-annotation-repro
