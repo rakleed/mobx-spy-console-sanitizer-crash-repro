@@ -1,10 +1,10 @@
-import './mobx-spy-console-hook-repro';
-
 import * as mobx from 'mobx';
 import { $mobx, makeAutoObservable } from 'mobx';
 import { createRoot } from 'react-dom/client';
 
-window.__MOBX_DEVTOOLS_GLOBAL_HOOK__?.injectMobx(mobx);
+import { injectMobxIntoUnsafeHook } from './mobx-spy-console-hook-repro';
+
+injectMobxIntoUnsafeHook(mobx);
 
 type MobxAdministrationWithValues = {
   values_: Map<string, unknown>;

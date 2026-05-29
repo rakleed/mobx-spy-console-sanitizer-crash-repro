@@ -4,14 +4,6 @@ type MobxInstance = {
   spy?: (listener: (event: MobxSpyEvent) => void) => () => void;
 };
 
-declare global {
-  interface Window {
-    __MOBX_DEVTOOLS_GLOBAL_HOOK__?: {
-      injectMobx: (mobx: MobxInstance) => void;
-    };
-  }
-}
-
 function sanitize(value: unknown): unknown {
   if (value === null || value === undefined) {
     return value;
@@ -30,16 +22,12 @@ function sanitize(value: unknown): unknown {
   return output;
 }
 
-window.__MOBX_DEVTOOLS_GLOBAL_HOOK__ = {
-  injectMobx(mobx) {
-    mobx.spy?.((event) => {
-      if (event.type === 'report-end') {
-        return;
-      }
+export function injectMobxIntoUnsafeHook(mobx: MobxInstance): void {
+  mobx.spy?.((event) => {
+    if (event.type === 'report-end') {
+      return;
+    }
 
-      console.log('[mobx-spy-console hook repro]', sanitize(event));
-    });
-  },
-};
-
-export {};
+    console.log('[mobx-spy-console hook repro]', sanitize(event));
+  });
+}
