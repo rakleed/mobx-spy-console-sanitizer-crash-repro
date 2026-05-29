@@ -30,11 +30,10 @@ escape the spy callback.
 
 ## Reproduction details
 
-The repro installs a small `__MOBX_DEVTOOLS_GLOBAL_HOOK__` implementation in
-`src/mobx-spy-console-hook-repro.ts`. It intentionally uses the old unsafe sanitizer behavior:
+`src/mobx-spy-console-hook-repro.ts` intentionally uses the old unsafe sanitizer behavior:
 
 ```ts
-output[key] = sanitize((value as Record<string, unknown>)[key], depth + 1, seen);
+output[key] = sanitize((value as Record<string, unknown>)[key]);
 ```
 
 The app creates a `SiteMapStore` with an enumerable MobX accessor named `map`, removes the matching MobX
