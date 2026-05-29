@@ -1,5 +1,5 @@
 {
-  "name": "mobx-vite-rolldown-invalid-annotation-repro",
+  "name": "mobx-spy-console-sanitizer-crash-repro",
   "private": true,
   "type": "module",
   "scripts": {
