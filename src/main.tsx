@@ -2,6 +2,7 @@ import './mobx-spy-console-hook-repro';
 
 import * as mobx from 'mobx';
 import {
+  $mobx,
   action,
   computed,
   makeAutoObservable,
@@ -90,8 +91,36 @@ class ObservableTodoStore {
   }
 }
 
+type MobxAdministrationWithValues = {
+  values_: Map<string, unknown>;
+};
+
+class SiteMapStore {
+  map = new Map([
+    ['home', '/'],
+    ['users', '/users'],
+  ]);
+
+  tick = 0;
+
+  constructor() {
+    makeAutoObservable(this);
+  }
+
+  triggerSpyEvent() {
+    this.tick += 1;
+  }
+
+  removeObservableMapValue() {
+    (this as unknown as { [$mobx]: MobxAdministrationWithValues })[$mobx].values_.delete('map');
+  }
+}
+
 const autoObservableCounterStore = new AutoObservableCounterStore();
 const observableTodoStore = new ObservableTodoStore();
+const siteMapStore = new SiteMapStore();
+
+siteMapStore.removeObservableMapValue();
 
 function runBatchAction() {
   runInAction('update stores with runInAction', () => {
@@ -140,6 +169,17 @@ const App = observer(() => (
           </li>
         ))}
       </ul>
+    </section>
+
+    <section>
+      <h2>mobx-spy-console unsafe sanitize crash</h2>
+      <p>
+        The store has an enumerable MobX accessor named <code>map</code>. The repro removes the matching MobX
+        administration value, then the hook's unsafe sanitizer reads <code>event.object.map</code> while processing a
+        spy event.
+      </p>
+      <button onClick={() => siteMapStore.triggerSpyEvent()}>Trigger unsafe sanitize crash</button>
+      <div>Spy trigger count: {siteMapStore.tick}</div>
     </section>
 
     <section>
